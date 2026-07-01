@@ -39,3 +39,6 @@ class UserUpdate(BaseModel):
     LastName: Optional[str] = None
     bio: Optional[str] = None
     ProfilePic: Optional[str] = None
+
+class GoogleToken(BaseModel):
+    token: str
