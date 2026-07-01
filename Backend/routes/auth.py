@@ -37,7 +37,7 @@ def google_login(request: schemas.GoogleToken, db: Session = Depends(database.ge
         if not user:
             # Create a new user with a random unguessable password
             random_password = os.urandom(16).hex()
-            hashed_password = hashing.Hash.bcrypt(random_password)
+            hashed_password = hashing.Hash.argon2(random_password)
             
             user = models.User(
                 FirstName=first_name,
