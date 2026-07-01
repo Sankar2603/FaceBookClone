@@ -7,7 +7,11 @@ from routes import auth, users, friends, posts, comments, likes
 app = FastAPI()
 
 # CORS configuration
-origins = ["http://localhost:3000", "http://127.0.0.1:3000"]
+origins = [
+    "http://localhost:3000", 
+    "http://127.0.0.1:3000", 
+    "https://face-book-clone-vgal.vercel.app"
+]
 
 app.add_middleware(
     CORSMiddleware,
