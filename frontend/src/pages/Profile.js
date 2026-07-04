@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, Avatar, Card, CardHeader, CardContent, CircularProgress, Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
+import { Container, Typography, Avatar, Card, CardHeader, CardContent, CircularProgress, Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Fade } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import api from '../api';
 
@@ -118,7 +118,8 @@ const Profile = () => {
   };
 
   return (
-    <Container maxWidth="sm">
+    <Fade in={true} timeout={600}>
+      <Container maxWidth="sm">
       <Typography variant="h4" align="center" gutterBottom>Profile</Typography>
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
@@ -195,8 +196,9 @@ const Profile = () => {
       {posts.length === 0 ? (
         <Typography align="center">No posts yet.</Typography>
       ) : (
-        posts.map(post => (
-          <Card key={post.id} sx={{ mb: 2 }}>
+        posts.map((post, index) => (
+          <Fade in={true} timeout={500 + (index * 100)} key={post.id}>
+            <Card sx={{ mb: 2, transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out', '&:hover': { transform: 'scale(1.02)', boxShadow: 6 } }}>
             <CardHeader
               avatar={
                 <Avatar src={user?.ProfilePic}>
@@ -209,7 +211,8 @@ const Profile = () => {
             <CardContent>
               <Typography>{post.content}</Typography>
             </CardContent>
-          </Card>
+            </Card>
+          </Fade>
         ))
       )}
 
@@ -255,7 +258,8 @@ const Profile = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    </Container>
+      </Container>
+    </Fade>
   );
 };
 

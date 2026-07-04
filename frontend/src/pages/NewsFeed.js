@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, Card, CardContent, CardHeader, Avatar, CircularProgress, Box, TextField, Button, IconButton, Divider, List, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
+import { Container, Typography, Card, CardContent, CardHeader, Avatar, CircularProgress, Box, TextField, Button, IconButton, Divider, List, ListItem, ListItemAvatar, ListItemText, Fade, Collapse } from '@mui/material';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import CommentIcon from '@mui/icons-material/Comment';
 import api from '../api';
@@ -86,24 +86,34 @@ const NewsFeed = () => {
   };
 
   const handleLike = async (postId) => {
+    // Optimistic UI Update: assume success and immediately update the UI
+    const previousCount = likeCounts[postId] || 0;
+    setLikeCounts(prev => ({ ...prev, [postId]: previousCount + 1 }));
+    
     try {
       await api.post(`/likes/${postId}/like`);
-      // Fetch updated like count for this post only
+      // Fetch updated like count for this post only to ensure accuracy
       const likeRes = await api.get(`/likes/${postId}`);
       setLikeCounts(prev => ({ ...prev, [postId]: likeRes.data.count }));
       setError('');
     } catch (err) {
       // If already liked, backend returns 400, so try unlike
       if (err.response && err.response.status === 400) {
+        // Optimistic unlike
+        setLikeCounts(prev => ({ ...prev, [postId]: previousCount - 1 }));
         try {
           await api.post(`/likes/${postId}/unlike`);
           const likeRes = await api.get(`/likes/${postId}`);
           setLikeCounts(prev => ({ ...prev, [postId]: likeRes.data.count }));
           setError('');
         } catch (unlikeErr) {
+          // Revert if unlike also fails
+          setLikeCounts(prev => ({ ...prev, [postId]: previousCount }));
           setError('You have not liked this post yet.');
         }
       } else {
+        // Revert on general error
+        setLikeCounts(prev => ({ ...prev, [postId]: previousCount }));
         setError('Could not update like status. Please try again.');
       }
     }
@@ -165,8 +175,9 @@ const NewsFeed = () => {
         posts.length === 0 ? (
           <Typography align="center">No posts to show.</Typography>
         ) : (
-          posts.map(post => (
-            <Card key={post.id} sx={{ mb: 2 }}>
+          posts.map((post, index) => (
+            <Fade in={true} timeout={500 + (index * 100)} key={post.id}>
+              <Card sx={{ mb: 2, transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out', '&:hover': { transform: 'scale(1.02)', boxShadow: 6 } }}>
               <CardHeader
                 avatar={<Avatar src={postUsers[post.user_id]?.avatarUrl}>{postUsers[post.user_id]?.name?.[0]}</Avatar>}
                 title={postUsers[post.user_id]?.name || `User ID: ${post.user_id}`}
@@ -221,7 +232,8 @@ const NewsFeed = () => {
                   </Button>
                 </Box>
               </CardContent>
-            </Card>
+              </Card>
+            </Fade>
           ))
         )
       )}

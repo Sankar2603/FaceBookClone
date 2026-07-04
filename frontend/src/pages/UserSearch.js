@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, TextField, Button, List, ListItem, ListItemAvatar, Avatar, ListItemText, CircularProgress, Box, ListItemButton } from '@mui/material';
+import { Container, Typography, TextField, Button, List, ListItem, ListItemAvatar, Avatar, ListItemText, CircularProgress, Box, ListItemButton, Fade } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 
@@ -86,8 +86,9 @@ const UserSearch = () => {
           <Typography align="center">No user found.</Typography>
         ) : (
           <List>
-            {results.map(user => (
-              <ListItem key={user.id} disablePadding>
+            {results.map((user, index) => (
+              <Fade in={true} timeout={500 + (index * 50)} key={user.id}>
+                <ListItem disablePadding sx={{ transition: 'transform 0.2s, box-shadow 0.2s', '&:hover': { transform: 'scale(1.02)', boxShadow: 3, borderRadius: 2, zIndex: 1 }, mb: 1, bgcolor: 'background.paper' }}>
                 <ListItemButton onClick={() => navigate(`/profile/${user.id}`)}>
                   <ListItemAvatar>
                     <Avatar src={user.ProfilePic}>{user.FirstName?.[0]}</Avatar>
@@ -115,7 +116,8 @@ const UserSearch = () => {
                     </Button>
                   )}
                 </ListItemButton>
-              </ListItem>
+                </ListItem>
+              </Fade>
             ))}
           </List>
         )

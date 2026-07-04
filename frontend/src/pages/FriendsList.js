@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, List, ListItem, ListItemAvatar, Avatar, ListItemText, CircularProgress, Box, Button } from '@mui/material';
+import { Container, Typography, List, ListItem, ListItemAvatar, Avatar, ListItemText, CircularProgress, Box, Button, Fade } from '@mui/material';
 import api from '../api';
 
 const FriendsList = () => {
@@ -64,15 +64,17 @@ const FriendsList = () => {
             <Typography align="center">No pending requests.</Typography>
           ) : (
             <List>
-              {requests.map(req => (
-                <ListItem key={req.user_id}>
-                  <ListItemAvatar>
-                    <Avatar src={requestUsers[req.user_id]?.avatarUrl}>{requestUsers[req.user_id]?.name?.[0]}</Avatar>
-                  </ListItemAvatar>
-                  <ListItemText primary={requestUsers[req.user_id]?.name || `User ID: ${req.user_id}`} />
-                  <Button variant="contained" color="primary" sx={{ mr: 1 }} onClick={() => handleAccept(req.user_id)}>Accept</Button>
-                  <Button variant="outlined" color="error" onClick={() => handleDeny(req.user_id)}>Deny</Button>
-                </ListItem>
+              {requests.map((req, index) => (
+                <Fade in={true} timeout={500 + (index * 100)} key={req.user_id}>
+                  <ListItem sx={{ transition: 'transform 0.2s, box-shadow 0.2s', '&:hover': { transform: 'scale(1.02)', boxShadow: 2, borderRadius: 2, bgcolor: 'background.paper' }, mb: 1 }}>
+                    <ListItemAvatar>
+                      <Avatar src={requestUsers[req.user_id]?.avatarUrl}>{requestUsers[req.user_id]?.name?.[0]}</Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary={requestUsers[req.user_id]?.name || `User ID: ${req.user_id}`} />
+                    <Button variant="contained" color="primary" sx={{ mr: 1 }} onClick={() => handleAccept(req.user_id)}>Accept</Button>
+                    <Button variant="outlined" color="error" onClick={() => handleDeny(req.user_id)}>Deny</Button>
+                  </ListItem>
+                </Fade>
               ))}
             </List>
           )}
@@ -81,13 +83,15 @@ const FriendsList = () => {
             <Typography align="center">No friends yet.</Typography>
           ) : (
             <List>
-              {friends.map(friend => (
-                <ListItem key={friend.id}>
-                  <ListItemAvatar>
-                    <Avatar src={friend.ProfilePic}>{friend.FirstName?.[0]}</Avatar>
-                  </ListItemAvatar>
-                  <ListItemText primary={`${friend.FirstName} ${friend.LastName}`} secondary={friend.email} />
-                </ListItem>
+              {friends.map((friend, index) => (
+                <Fade in={true} timeout={500 + (index * 100)} key={friend.id}>
+                  <ListItem sx={{ transition: 'transform 0.2s, box-shadow 0.2s', '&:hover': { transform: 'scale(1.02)', boxShadow: 2, borderRadius: 2, bgcolor: 'background.paper' }, mb: 1 }}>
+                    <ListItemAvatar>
+                      <Avatar src={friend.ProfilePic}>{friend.FirstName?.[0]}</Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary={`${friend.FirstName} ${friend.LastName}`} secondary={friend.email} />
+                  </ListItem>
+                </Fade>
               ))}
             </List>
           )}
